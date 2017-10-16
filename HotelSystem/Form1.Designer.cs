@@ -90,7 +90,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(130, 50);
+            this.textBox1.Location = new System.Drawing.Point(129, 50);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(156, 20);
             this.textBox1.TabIndex = 5;
@@ -121,6 +121,7 @@
             this.button1.TabIndex = 9;
             this.button1.Text = "...";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // textBox3
             // 
