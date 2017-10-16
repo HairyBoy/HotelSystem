@@ -19,7 +19,14 @@ namespace HotelSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.OpenFile();
+            openFileDialog1.ShowDialog();
+            string path = openFileDialog1.FileName;
+                
+            imgupdate(path);
+        }
+        private void imgupdate(string file)
+        {
+            pictureBox1.ImageLocation = file;
         }
     }
 }
