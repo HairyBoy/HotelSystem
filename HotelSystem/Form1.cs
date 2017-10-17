@@ -21,12 +21,19 @@ namespace HotelSystem
         {
             openFileDialog1.ShowDialog();
             string path = openFileDialog1.FileName;
-                
             imgupdate(path);
         }
         private void imgupdate(string file)
         {
             pictureBox1.ImageLocation = file;
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+        }
+
+        private void SavePathClick_Click(object sender, EventArgs e)
+        {
+            SavePathDialog.ShowDialog();
+            string SavePath = SavePathDialog.SelectedPath;
+            SavePathText.Text = SavePath;
         }
     }
 }
