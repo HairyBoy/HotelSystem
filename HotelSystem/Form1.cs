@@ -19,8 +19,10 @@ namespace HotelSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.ShowDialog();
-            string path = openFileDialog1.FileName;
+            OpenFileDialog Background = new OpenFileDialog();
+            Background.Filter = "Image Files (JPG,PNG,GIF)|*.JPG;*.PNG;*.GIF";
+            Background.ShowDialog();
+            string path = Background.FileName;
             imgupdate(path);
         }
         private void imgupdate(string file)
@@ -34,6 +36,45 @@ namespace HotelSystem
             SavePathDialog.ShowDialog();
             string SavePath = SavePathDialog.SelectedPath;
             SavePathText.Text = SavePath;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            V(ContactNo.Text, HotelName.Text);
+        }
+        private bool NumbVal (string St)
+        {
+            for (int i=0;i<St.Length;i++)
+            {
+                if (Char.IsNumber(St[i]) == true) { }
+                else if (St[i] == ' ') { }
+                else { return false; }
+            }
+            return true;
+        }
+        private bool V(string ContactNo ,string HotelName)
+        {
+            bool val = true;
+            if (NumbVal(ContactNo) == true && ContactNo.Length < 17)
+            {
+                NumbWarn.Visible = false;
+            }
+            else
+            {
+                NumbWarn.Visible = true;
+                val = false;
+            }
+            if (HotelName.Length < 31)
+            {
+                label6.Visible = false;
+            }
+            else
+            {
+                label6.Visible = true;
+                val = false;
+            }
+            return val;
+            
         }
     }
 }

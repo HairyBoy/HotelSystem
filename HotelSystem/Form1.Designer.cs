@@ -42,6 +42,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.SavePathClick = new System.Windows.Forms.Button();
             this.SavePathDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.NumbWarn = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -85,11 +87,12 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(67, 183);
+            this.label5.Location = new System.Drawing.Point(18, 179);
+            this.label5.MaximumSize = new System.Drawing.Size(125, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(57, 13);
+            this.label5.Size = new System.Drawing.Size(106, 26);
             this.label5.TabIndex = 4;
-            this.label5.Text = "Save Path";
+            this.label5.Text = "Path to HotelSystem Folder";
             // 
             // ContactNo
             // 
@@ -109,6 +112,7 @@
             // 
             this.SavePathText.Location = new System.Drawing.Point(130, 180);
             this.SavePathText.Name = "SavePathText";
+            this.SavePathText.ReadOnly = true;
             this.SavePathText.Size = new System.Drawing.Size(156, 20);
             this.SavePathText.TabIndex = 8;
             // 
@@ -134,6 +138,7 @@
             this.button2.TabIndex = 11;
             this.button2.Text = "Submit";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // pictureBox1
             // 
@@ -153,11 +158,40 @@
             this.SavePathClick.UseVisualStyleBackColor = true;
             this.SavePathClick.Click += new System.EventHandler(this.SavePathClick_Click);
             // 
+            // SavePathDialog
+            // 
+            this.SavePathDialog.RootFolder = System.Environment.SpecialFolder.DesktopDirectory;
+            // 
+            // NumbWarn
+            // 
+            this.NumbWarn.AutoSize = true;
+            this.NumbWarn.ForeColor = System.Drawing.Color.Red;
+            this.NumbWarn.Location = new System.Drawing.Point(289, 44);
+            this.NumbWarn.MaximumSize = new System.Drawing.Size(150, 0);
+            this.NumbWarn.Name = "NumbWarn";
+            this.NumbWarn.Size = new System.Drawing.Size(141, 26);
+            this.NumbWarn.TabIndex = 14;
+            this.NumbWarn.Text = "Must only contain numbers, and be 16 characters or less";
+            this.NumbWarn.Visible = false;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.Color.Red;
+            this.label6.Location = new System.Drawing.Point(289, 87);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(158, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Must be less than 30 characters";
+            this.label6.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(458, 374);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.NumbWarn);
             this.Controls.Add(this.SavePathClick);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button2);
@@ -194,6 +228,8 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button SavePathClick;
         private System.Windows.Forms.FolderBrowserDialog SavePathDialog;
+        private System.Windows.Forms.Label NumbWarn;
+        private System.Windows.Forms.Label label6;
     }
 }
 
