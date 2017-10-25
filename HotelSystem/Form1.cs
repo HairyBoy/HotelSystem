@@ -15,6 +15,7 @@ namespace HotelSystem
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -40,7 +41,8 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            V(ContactNo.Text, HotelName.Text);
+            V(ContactNo.Text, HotelName.Text, SavePathText.Text);
+
         }
         private bool NumbVal (string St)
         {
@@ -52,9 +54,10 @@ namespace HotelSystem
             }
             return true;
         }
-        private bool V(string ContactNo ,string HotelName)
+        private bool V(string ContactNo ,string HotelName, string Path)
         {
             bool val = true;
+            // ContactNumber
             if (NumbVal(ContactNo) == true && ContactNo.Length < 17)
             {
                 NumbWarn.Visible = false;
@@ -64,6 +67,7 @@ namespace HotelSystem
                 NumbWarn.Visible = true;
                 val = false;
             }
+            // HotelName
             if (HotelName.Length < 31)
             {
                 label6.Visible = false;
@@ -73,6 +77,13 @@ namespace HotelSystem
                 label6.Visible = true;
                 val = false;
             }
+            // HotelSystem Domain
+            string path = (Path);
+            if (Directory){ }
+            
+
+
+
             return val;
             
         }

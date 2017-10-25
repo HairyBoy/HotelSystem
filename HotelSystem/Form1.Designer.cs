@@ -115,6 +115,7 @@
             this.SavePathText.ReadOnly = true;
             this.SavePathText.Size = new System.Drawing.Size(156, 20);
             this.SavePathText.TabIndex = 8;
+            this.SavePathText.Text = "C:\\Program Files\\HotelSystem";
             // 
             // openFileDialog1
             // 
@@ -178,7 +179,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.ForeColor = System.Drawing.Color.Red;
-            this.label6.Location = new System.Drawing.Point(289, 87);
+            this.label6.Location = new System.Drawing.Point(289, 83);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(158, 13);
             this.label6.TabIndex = 15;
