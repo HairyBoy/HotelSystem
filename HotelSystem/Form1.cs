@@ -23,7 +23,7 @@ namespace HotelSystem
             OpenFileDialog Background = new OpenFileDialog();
             Background.Filter = "Image Files (JPG,PNG,GIF)|*.JPG;*.PNG;*.GIF";
             Background.ShowDialog();
-            string path = Background.FileName;
+            string path = (Background.FileName);
             imgupdate(path);
         }
         private void imgupdate(string file)
@@ -35,7 +35,7 @@ namespace HotelSystem
         private void SavePathClick_Click(object sender, EventArgs e)
         {
             SavePathDialog.ShowDialog();
-            string SavePath = SavePathDialog.SelectedPath;
+            string SavePath = (SavePathDialog.SelectedPath + "\"HotelSystem"");
             SavePathText.Text = SavePath;
         }
 
@@ -78,14 +78,18 @@ namespace HotelSystem
                 val = false;
             }
             // HotelSystem Domain
-            string path = (Path);
-            if (Directory){ }
+            System.IO.Directory.CreateDirectory(Path);
             
 
 
 
             return val;
             
+        }
+
+        private void SavePathDialog_HelpRequest(object sender, EventArgs e)
+        {
+
         }
     }
 }
