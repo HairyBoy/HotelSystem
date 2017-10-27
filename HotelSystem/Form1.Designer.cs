@@ -115,7 +115,7 @@
             this.SavePathText.ReadOnly = true;
             this.SavePathText.Size = new System.Drawing.Size(156, 20);
             this.SavePathText.TabIndex = 8;
-            this.SavePathText.Text = "C:\\Program Files";
+            this.SavePathText.Text = "C:\\Program Files\\HotelSystem";
             // 
             // openFileDialog1
             // 

@@ -35,8 +35,16 @@ namespace HotelSystem
         private void SavePathClick_Click(object sender, EventArgs e)
         {
             SavePathDialog.ShowDialog();
-            string SavePath = (SavePathDialog.SelectedPath + "\"HotelSystem"");
-            SavePathText.Text = SavePath;
+            string SavePath;
+            if (SavePathDialog.SelectedPath == "")
+            {
+                SavePath = "C:\\Program Files\\HotelSystem";
+            }
+            else
+            {
+                SavePath = (SavePathDialog.SelectedPath + "\\HotelSystem");
+            }
+            SavePathText.Text = (SavePath);
         }
 
         private void button2_Click(object sender, EventArgs e)
