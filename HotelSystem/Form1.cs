@@ -49,7 +49,17 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            V(ContactNo.Text, HotelName.Text, SavePathText.Text);
+            if (V(ContactNo.Text, HotelName.Text) == true)
+            {
+                //Directory Creation
+                System.IO.Directory.CreateDirectory(SavePathText.Text);
+                //
+                using (var writer=new System.IO.StreamWriter(SavePathText.Text + "\\config.txt")) {
+                    writer.WriteLine(HotelName.Text);
+                    writer.WriteLine(ContactNo.Text);
+                    writer.WriteLine(pictureBox1.ImageLocation);
+                }
+            }
 
         }
         private bool NumbVal (string St)
@@ -62,7 +72,7 @@ namespace HotelSystem
             }
             return true;
         }
-        private bool V(string ContactNo ,string HotelName, string Path)
+        private bool V(string ContactNo ,string HotelName)
         {
             bool val = true;
             // ContactNumber
@@ -85,8 +95,7 @@ namespace HotelSystem
                 label6.Visible = true;
                 val = false;
             }
-            // HotelSystem Domain
-            System.IO.Directory.CreateDirectory(Path);
+
             
 
 
