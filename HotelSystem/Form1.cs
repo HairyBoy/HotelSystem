@@ -44,6 +44,10 @@ namespace HotelSystem
             {
                 SavePath = (SavePathDialog.SelectedPath + "\\HotelSystem");
             }
+            if (System.IO.File.Exists(SavePath + "\\config.txt"))
+            {
+                HomeCall();
+            }
             SavePathText.Text = (SavePath);
         }
 
@@ -59,6 +63,7 @@ namespace HotelSystem
                     writer.WriteLine(ContactNo.Text);
                     writer.WriteLine(pictureBox1.ImageLocation);
                 }
+                HomeCall();
             }
 
         }
@@ -95,18 +100,26 @@ namespace HotelSystem
                 label6.Visible = true;
                 val = false;
             }
-
-            
-
-
-
             return val;
-            
         }
 
+        private void HomeCall()
+        {
+            Hide();
+            Form2 HomeScreen = new Form2();
+            HomeScreen.Show();
+        }
         private void SavePathDialog_HelpRequest(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (System.IO.File.Exists("C:\\Program Files\\HotelSystem\\config.txt"))
+            {
+                HomeCall();
+            }
         }
     }
 }
