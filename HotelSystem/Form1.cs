@@ -14,16 +14,9 @@ namespace HotelSystem
     {
         public Form1()
         {
-            if (System.IO.File.Exists("C:\\Program Files\\HotelSystem\\config.txt"))
-            {
-                Form2 HomeScreen = new Form2();
-                HomeScreen.Show();
-                
-            }
-            else
-            {
+          
                 InitializeComponent();
-            }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -113,9 +106,10 @@ namespace HotelSystem
 
         private void HomeCall()
         {
+            this.Hide();
             Form2 HomeScreen = new Form2();
-            HomeScreen.Show();
-            Hide();
+            HomeScreen.ShowDialog();
+            this.Close();
         }
         private void SavePathDialog_HelpRequest(object sender, EventArgs e)
         {
@@ -124,7 +118,10 @@ namespace HotelSystem
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            if (System.IO.File.Exists("C:\\Program Files\\HotelSystem\\config.txt"))
+            {
+                HomeCall();
+            }
         }
     }
 }
