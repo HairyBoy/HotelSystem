@@ -22,5 +22,9 @@ namespace HotelSystem
       
 
         }
+        private void richTextBox1_Click(object sender, System.EventArgs e)
+        {
+            richTextBox1.BackColor = Color.Red;
+        }
     }
 }
