@@ -167,6 +167,8 @@
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CoverPic)).BeginInit();
             this.Calendar.SuspendLayout();
             this.SuspendLayout();
@@ -176,6 +178,7 @@
             this.CoverPic.Location = new System.Drawing.Point(13, 13);
             this.CoverPic.Name = "CoverPic";
             this.CoverPic.Size = new System.Drawing.Size(290, 111);
+            this.CoverPic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.CoverPic.TabIndex = 0;
             this.CoverPic.TabStop = false;
             // 
@@ -247,20 +250,21 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1159, 269);
+            this.button1.Location = new System.Drawing.Point(1159, 257);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(29, 23);
             this.button1.TabIndex = 9;
-            this.button1.Text = "▶";
+            this.button1.Text = "⯈";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(721, 503);
+            this.button2.Location = new System.Drawing.Point(738, 503);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(27, 23);
             this.button2.TabIndex = 10;
-            this.button2.Text = "▼";
+            this.button2.Text = "⯆";
             this.button2.UseVisualStyleBackColor = true;
             // 
             // Calendar
@@ -1963,11 +1967,32 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(1159, 286);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(29, 23);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "⯇";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(704, 503);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(27, 23);
+            this.button4.TabIndex = 13;
+            this.button4.Text = "⯅";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1200, 535);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.Calendar);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -2130,5 +2155,7 @@
         private System.Windows.Forms.RichTextBox richTextBox4;
         private System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.RichTextBox richTextBox2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }
