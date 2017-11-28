@@ -20,6 +20,7 @@ namespace HotelSystem
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            BookingForm BookingForm = new BookingForm();
             UIUpdate();
             ResetDates(0);
             RichTextBox Rich;
@@ -69,6 +70,13 @@ namespace HotelSystem
             //LEFT DATE
         {
             ResetDates(-1);
+        }
+
+        private void BookRoom_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            BookingForm BookingForm = new BookingForm();
+            BookingForm.ShowDialog();
         }
     }
 }

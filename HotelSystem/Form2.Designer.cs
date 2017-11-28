@@ -191,6 +191,7 @@
             this.BookRoom.TabIndex = 1;
             this.BookRoom.Text = "Book A Room";
             this.BookRoom.UseVisualStyleBackColor = true;
+            this.BookRoom.Click += new System.EventHandler(this.BookRoom_Click);
             // 
             // Refresh
             // 
