@@ -30,12 +30,25 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string DBAddress;
-            string SQL;
-            DBAddress = "Data Source=VisitorTable;Initial Catalog=Air; Trusted_Connection=True;";
-            using (SqlConnection cmd = new SqlConnection(DBAddress))
+            DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+        }
+        private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
+        {
+            
+            string ConStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\lewis\\Source\\Repos\\HotelSystem\\HotelSystem\\Database1.mdf;Integrated Security=True";
+            using (SqlConnection DB = new SqlConnection(ConStr))
             {
-                
+                DB.Open();
+                using(SqlCommand Comm = new SqlCommand(
+                "INSERT INTO Visitors VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
+                {
+                    Comm.Parameters.Add(new SqlParameter("FName", FName));
+                    Comm.Parameters.Add(new SqlParameter("SName", SName));
+                    Comm.Parameters.Add(new SqlParameter("ContactNo", Numb));
+                    Comm.Parameters.Add(new SqlParameter("Email", VEmail));
+                    Comm.Parameters.Add(new SqlParameter("Notes", Notes));
+                    Comm.ExecuteNonQuery();
+                }
             }
         }
     }
