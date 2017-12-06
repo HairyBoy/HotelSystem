@@ -35,12 +35,12 @@ namespace HotelSystem
         private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
         {
             
-            string ConStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\lewis\\Source\\Repos\\HotelSystem\\HotelSystem\\Database1.mdf;Integrated Security=True";
+            string ConStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+LinkString()+";Integrated Security=True";
             using (SqlConnection DB = new SqlConnection(ConStr))
             {
                 DB.Open();
                 using(SqlCommand Comm = new SqlCommand(
-                "INSERT INTO Visitors VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
+                "INSERT INTO Visitors (FName, SName, ContactNo, Email, Notes) VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
                 {
                     Comm.Parameters.Add(new SqlParameter("FName", FName));
                     Comm.Parameters.Add(new SqlParameter("SName", SName));
@@ -50,6 +50,11 @@ namespace HotelSystem
                     Comm.ExecuteNonQuery();
                 }
             }
+        }
+        private string LinkString()
+        {
+            string path = (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            return (path+"\\Database1.mdf");
         }
     }
 }
