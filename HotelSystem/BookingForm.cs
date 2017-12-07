@@ -30,12 +30,15 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text))
+            {
+                DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+            }
         }
         private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
         {
             
-            string ConStr = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+LinkString()+";Integrated Security=True";
+            string ConStr = LinkString();
             using (SqlConnection DB = new SqlConnection(ConStr))
             {
                 DB.Open();
@@ -53,8 +56,13 @@ namespace HotelSystem
         }
         private string LinkString()
         {
-            string path = (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
-            return (path+"\\Database1.mdf");
+            string path = (AppDomain.CurrentDomain.BaseDirectory);
+            return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ path + "Database1.mdf;Integrated Security=True");
+        }
+        private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes)
+        {
+            bool end = true;
+            if (FName.Length > 20) { }
         }
     }
 }
