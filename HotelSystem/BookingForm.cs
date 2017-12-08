@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -61,8 +62,21 @@ namespace HotelSystem
         }
         private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes)
         {
+            label35.Text = "";
+            Regex AlphNum = new Regex("^[a-zA-Z0-9]*$");
             bool end = true;
-            if (FName.Length > 20) { }
+            if (AlphNum.IsMatch(FName)==false)
+            {
+                end = false;
+                label35.Text += "Must contain alphanumeric characters.";
+            }
+            if (FName.Length > 20)
+            {
+                end = false;
+                //\R\N
+                label35.Text += "Must contain less than 20 characters.";
+            }
+            return false;
         }
     }
 }
