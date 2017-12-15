@@ -62,20 +62,63 @@ namespace HotelSystem
         }
         private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes)
         {
+            //FIRSTNAME START
             label35.Text = "";
             Regex AlphNum = new Regex("^[a-zA-Z0-9]*$");
+            Regex Num = new Regex("^[0-9]*$");
             bool end = true;
             if (AlphNum.IsMatch(FName)==false)
             {
                 end = false;
-                label35.Text += "Must contain alphanumeric characters.";
+                label35.Text += "\r\nFName must only contain alphanumerics.";
             }
             if (FName.Length > 20)
             {
                 end = false;
-                //\R\N
-                label35.Text += "Must contain less than 20 characters.";
+                label35.Text += "\r\nFName must have less than 20 characters";
             }
+            if (FName == "")
+            {
+                end = false;
+                label35.Text += "\r\nFName cannot be blank";
+            }
+            //FIRSTNAME END
+            //SECONDNAME START
+            if (AlphNum.IsMatch(SName) == false)
+            {
+                end = false;
+                label35.Text += "\r\nSName must only contain alphanumerics.";
+            }
+            if (SName.Length > 20)
+            {
+                end = false;
+                label35.Text += "\r\nSName must have less than 20 characters";
+            }
+            if (SName == "")
+            {
+                end = false;
+                label35.Text += "\r\nSName cannot be blank";
+            }
+            //SECONDNAME END
+            //CONTACTNO START
+            if ((Numb.Length>0&&Numb.Length<6)||Numb.Length>15)
+            {
+                end = false;
+                label35.Text += "\r\nPNumber must be between 6 and 14 characters";
+            }
+            if (Num.IsMatch(Numb)==false)
+            {
+                end = false;
+                label35.Text += "\r\nPNumber must contain only numbers.";
+            }
+            //CONTACTNO END
+            //EMAIL START
+
+            //EMAIL END
+            //NOTES START
+
+            //NOTES END
+
             return false;
         }
     }
