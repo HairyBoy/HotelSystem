@@ -113,13 +113,36 @@ namespace HotelSystem
             }
             //CONTACTNO END
             //EMAIL START
-
+            if (VEmail.Length > 50)
+            {
+                end = false;
+                label35.Text += "\r\nEmail must contain 50 or less characters.";
+            }
+            if (AtVal(VEmail))
+            {
+                end = false;
+                label35.Text += "\r\nEmail must contain a '@'.";
+            }
             //EMAIL END
             //NOTES START
-
+            if (Notes.Length > 50)
+            {
+                label35.Text += "\r\nNotes must contain 50 or less characters.";
+            }
             //NOTES END
 
             return false;
+        }
+        private bool AtVal(string VEmail)
+        {
+            for (int i = 0; i < VEmail.Length; i++)
+            {
+                if (VEmail[i] == '@')
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
