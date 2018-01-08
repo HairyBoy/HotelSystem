@@ -21,6 +21,8 @@ namespace HotelSystem
 
         private void BookingForm_Load(object sender, EventArgs e)
         {
+            string[] combo = new string[] {"Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other"};
+            comboBox1.Items.AddRange(combo);
             this.FormClosing += new FormClosingEventHandler(BookingForm_Closing);
         }
         private void BookingForm_Closing(object sender, FormClosingEventArgs e)
@@ -31,7 +33,7 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text))
+            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value,comboBox1.Text))
             {
                 DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
             }
@@ -60,7 +62,7 @@ namespace HotelSystem
             string path = (AppDomain.CurrentDomain.BaseDirectory);
             return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ path + "Database1.mdf;Integrated Security=True");
         }
-        private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes)
+        private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo)
         {
             //FIRSTNAME START
             label35.Text = "";
@@ -127,11 +129,26 @@ namespace HotelSystem
             //NOTES START
             if (Notes.Length > 50)
             {
+                end = false;
                 label35.Text += "\r\nNotes must contain 50 or less characters.";
             }
             //NOTES END
-
-            return false;
+            //DATE START
+            if (DateTime.Compare(DateStart, DateEnd) >= 0)
+            {
+                end = false;
+                label35.Text += "\r\nThe second date must follow the first date.";
+            }
+            //DATE END
+            //COMBO START
+            if (Combo == "")
+            {
+                end = false;
+                label35.Text += "\r\nA size of room must be selected.";
+            }
+            //COMBO END
+            return end;
+            
         }
         private bool AtVal(string VEmail)
         {

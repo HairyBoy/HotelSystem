@@ -212,6 +212,7 @@
             this.AddRoom.TabIndex = 3;
             this.AddRoom.Text = "Add Room";
             this.AddRoom.UseVisualStyleBackColor = true;
+            this.AddRoom.Click += new System.EventHandler(this.AddRoom_Click);
             // 
             // Save
             // 
@@ -2006,7 +2007,7 @@
             this.Controls.Add(this.BookRoom);
             this.Controls.Add(this.CoverPic);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Home";
             this.Load += new System.EventHandler(this.Form2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.CoverPic)).EndInit();
             this.Calendar.ResumeLayout(false);
