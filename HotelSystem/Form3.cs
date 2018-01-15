@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 
@@ -66,7 +67,34 @@ namespace HotelSystem
         }
         private bool Val(string RNumb, string RSize, bool DAccess, string RPrice, string KeyNumb, string RNotes)
         {
-            return true;
+            bool temp = true;
+            label8.Text = "";
+            Regex Num = new Regex("^[0-9]*$");
+            Regex Mon = new Regex("^[0-9]{0,6}(\\.[0-9]{1,2})?$");
+
+            if (RNumb.Length==0 || RNumb.Length>4)
+            {
+                temp = false;
+                label8.Text += "\r\nRoom Number must contain 1-4 characters.";
+            }
+            if (Num.IsMatch(RNumb) == false)
+            {
+                temp = false;
+                label8.Text += "\r\nRoom Number must only contain numbers.";
+            }
+
+            if (Mon.IsMatch(RPrice) == false || RPrice.Length == 0)
+            {
+                temp = false;
+                label8.Text += "\r\nPrice must be a proper decimal value.";
+            }
+            if (RNotes.Length > 50)
+            {
+                temp = false;
+                label8.Text += "\r\nNotes must contain 50 or less characters.";
+            }
+
+            return temp;
         }
     }
 }
