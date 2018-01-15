@@ -147,6 +147,7 @@ namespace HotelSystem
                 label35.Text += "\r\nA size of room must be selected.";
             }
             //COMBO END
+            
             return end;
             
         }
@@ -164,7 +165,45 @@ namespace HotelSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
+            {
+                string Link = LinkString();
+                using (SqlConnection DB = new SqlConnection(Link))
+                using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber, RoomSize, DBAccess, Price, Notes, Booked? FROM Rooms", DB))
+                {
+                    DB.Open();
+                    using (SqlDataReader reader = Comm.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            int i = 0;
+                            while (reader.Read())
+                            {
+                                TempRoom p = new TempRoom();
+                                
+                            }
+                        }
+                    }
+                }
 
+
+
+
+            }
+            
         }
+        
+    }
+    public class TempRoom
+    {
+        private string _id;
+        private string _num;
+        private string _notes;
+        private string _price;
+
+        public string Price { get => _price; set => _price = value; }
+        public string Notes { get => _notes; set => _notes = value; }
+        public string Num { get => _num; set => _num = value; }
+        public string Id { get => _id; set => _id = value; }
     }
 }
