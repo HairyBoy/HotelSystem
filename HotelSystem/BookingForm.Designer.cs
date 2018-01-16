@@ -81,6 +81,8 @@
             this.label14 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.label35 = new System.Windows.Forms.Label();
+            this.DBCheck = new System.Windows.Forms.CheckBox();
+            this.label36 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -575,11 +577,31 @@
             this.label35.Size = new System.Drawing.Size(246, 213);
             this.label35.TabIndex = 20;
             // 
+            // DBCheck
+            // 
+            this.DBCheck.AutoSize = true;
+            this.DBCheck.Location = new System.Drawing.Point(284, 78);
+            this.DBCheck.Name = "DBCheck";
+            this.DBCheck.Size = new System.Drawing.Size(15, 14);
+            this.DBCheck.TabIndex = 21;
+            this.DBCheck.UseVisualStyleBackColor = true;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(187, 78);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(91, 13);
+            this.label36.TabIndex = 22;
+            this.label36.Text = "DB Requirement?";
+            // 
             // BookingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 424);
+            this.Controls.Add(this.label36);
+            this.Controls.Add(this.DBCheck);
             this.Controls.Add(this.label35);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -666,5 +688,7 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.CheckBox DBCheck;
+        private System.Windows.Forms.Label label36;
     }
 }

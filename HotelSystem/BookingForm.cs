@@ -167,43 +167,82 @@ namespace HotelSystem
         {
             if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
             {
+                var OutputList = new List<TempRoom>();
                 string Link = LinkString();
                 using (SqlConnection DB = new SqlConnection(Link))
-                using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber, RoomSize, DBAccess, Price, Notes, Booked? FROM Rooms", DB))
+                using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber, RoomSize, DBAccess, Price, Notes, Booked FROM Rooms", DB))
                 {
                     DB.Open();
                     using (SqlDataReader reader = Comm.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
-                            int i = 0;
                             while (reader.Read())
                             {
-                                TempRoom p = new TempRoom();
+                                OutputList.Add(new TempRoom { Id = reader.GetInt32(reader.GetOrdinal("ID")), Booked = reader.GetBoolean(reader.GetOrdinal("Booked")), Db = reader.GetBoolean(reader.GetOrdinal("DBAccess")), Num = reader.GetString(reader.GetOrdinal("RoomNumber")), Size = reader.GetString(reader.GetOrdinal("RoomSize")), Price = reader.GetDouble(reader.GetOrdinal("Price")), Notes = reader.GetString(reader.GetOrdinal("Notes")) });
                                 
                             }
                         }
                     }
                 }
-
+                int y = 1;
+                Label tabnum;
+                Label tabnote;
+                Label tabprice;
+                TimeSpan diff = dateTimePicker2.Value - dateTimePicker1.Value;
+                for (int i = 0; i < OutputList.Count; i++)
+                {
+                    if (RoomSearch(OutputList[i]))
+                    {
+                        tabnum = (Label)tableLayoutPanel1.GetControlFromPosition(0, y);
+                        tabnum.Text = OutputList[i].Num;
+                        tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
+                        tabnote.Text = OutputList[i].Notes;
+                        tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
+                        tabprice.Text = Convert.ToString(OutputList[i].Price*diff.TotalDays);
+                        y = y + 1;
+                    }
+                    if (y == 7)
+                    {
+                        break;
+                    }
+                }
 
 
 
             }
             
         }
-        
+        private bool RoomSearch(TempRoom room)
+        {
+            if (DBCheck.Checked == true &&room.Db==false)
+            {
+                return false;
+            }
+            //Requires proper time validation later on.
+            if (room.Size == comboBox1.Text)
+            {
+                return true;
+            }
+            return false;
+        }
     }
     public class TempRoom
     {
-        private string _id;
+        private int _id;
         private string _num;
+        private string _size;
         private string _notes;
-        private string _price;
+        private double _price;
+        private bool _booked;
+        private bool _db;
 
-        public string Price { get => _price; set => _price = value; }
+        public double Price { get => _price; set => _price = value; }
         public string Notes { get => _notes; set => _notes = value; }
         public string Num { get => _num; set => _num = value; }
-        public string Id { get => _id; set => _id = value; }
+        public int Id { get => _id; set => _id = value; }
+        public bool Booked { get => _booked; set => _booked = value; }
+        public bool Db { get => _db; set => _db = value; }
+        public string Size { get => _size; set => _size = value; }
     }
 }
