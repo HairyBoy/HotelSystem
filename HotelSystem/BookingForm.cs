@@ -179,7 +179,7 @@ namespace HotelSystem
                         {
                             while (reader.Read())
                             {
-                                OutputList.Add(new TempRoom { Id = reader.GetInt32(reader.GetOrdinal("ID")), Booked = reader.GetBoolean(reader.GetOrdinal("Booked")), Db = reader.GetBoolean(reader.GetOrdinal("DBAccess")), Num = reader.GetString(reader.GetOrdinal("RoomNumber")), Size = reader.GetString(reader.GetOrdinal("RoomSize")), Price = reader.GetDouble(reader.GetOrdinal("Price")), Notes = reader.GetString(reader.GetOrdinal("Notes")) });
+                                OutputList.Add(new TempRoom { Id = reader.GetInt32(reader.GetOrdinal("ID")), Booked = reader.GetByte(reader.GetOrdinal("Booked")), Db = reader.GetByte(reader.GetOrdinal("DBAccess")), Num = reader.GetChars(reader.GetOrdinal("RoomNumber")), Size = reader.GetString(reader.GetOrdinal("RoomSize")), Price = reader.GetDouble(reader.GetOrdinal("Price")), Notes = reader.GetString(reader.GetOrdinal("Notes")) });
                                 
                             }
                         }
@@ -215,7 +215,7 @@ namespace HotelSystem
         }
         private bool RoomSearch(TempRoom room)
         {
-            if (DBCheck.Checked == true &&room.Db==false)
+            if (DBCheck.Checked == true &&room.Db==0)
             {
                 return false;
             }
@@ -234,15 +234,15 @@ namespace HotelSystem
         private string _size;
         private string _notes;
         private double _price;
-        private bool _booked;
-        private bool _db;
+        private byte _booked;
+        private byte _db;
 
         public double Price { get => _price; set => _price = value; }
         public string Notes { get => _notes; set => _notes = value; }
         public string Num { get => _num; set => _num = value; }
         public int Id { get => _id; set => _id = value; }
-        public bool Booked { get => _booked; set => _booked = value; }
-        public bool Db { get => _db; set => _db = value; }
+        public byte Booked { get => _booked; set => _booked = value; }
+        public byte Db { get => _db; set => _db = value; }
         public string Size { get => _size; set => _size = value; }
     }
 }
