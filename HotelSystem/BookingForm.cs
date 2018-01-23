@@ -21,7 +21,7 @@ namespace HotelSystem
 
         private void BookingForm_Load(object sender, EventArgs e)
         {
-            string[] combo = new string[] {"Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other"};
+            string[] combo = new string[] { "Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other" };
             comboBox1.Items.AddRange(combo);
             this.FormClosing += new FormClosingEventHandler(BookingForm_Closing);
         }
@@ -33,19 +33,19 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value,comboBox1.Text))
+            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
             {
                 DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
             }
         }
         private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
         {
-            
+
             string ConStr = LinkString();
             using (SqlConnection DB = new SqlConnection(ConStr))
             {
                 DB.Open();
-                using(SqlCommand Comm = new SqlCommand(
+                using (SqlCommand Comm = new SqlCommand(
                 "INSERT INTO Visitors (FName, SName, ContactNo, Email, Notes) VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
                 {
                     Comm.Parameters.Add(new SqlParameter("FName", FName));
@@ -60,7 +60,7 @@ namespace HotelSystem
         private string LinkString()
         {
             string path = (AppDomain.CurrentDomain.BaseDirectory);
-            return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ path + "Database1.mdf;Integrated Security=True");
+            return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
         }
         private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo)
         {
@@ -69,7 +69,7 @@ namespace HotelSystem
             Regex AlphNum = new Regex("^[a-zA-Z0-9]*$");
             Regex Num = new Regex("^[0-9]*$");
             bool end = true;
-            if (AlphNum.IsMatch(FName)==false)
+            if (AlphNum.IsMatch(FName) == false)
             {
                 end = false;
                 label35.Text += "\r\nFName must only contain alphanumerics.";
@@ -103,12 +103,12 @@ namespace HotelSystem
             }
             //SECONDNAME END
             //CONTACTNO START
-            if ((Numb.Length>0&&Numb.Length<6)||Numb.Length>15)
+            if ((Numb.Length > 0 && Numb.Length < 6) || Numb.Length > 15)
             {
                 end = false;
                 label35.Text += "\r\nPNumber must be between 6 and 14 characters";
             }
-            if (Num.IsMatch(Numb)==false)
+            if (Num.IsMatch(Numb) == false)
             {
                 end = false;
                 label35.Text += "\r\nPNumber must contain only numbers.";
@@ -147,9 +147,9 @@ namespace HotelSystem
                 label35.Text += "\r\nA size of room must be selected.";
             }
             //COMBO END
-            
+
             return end;
-            
+
         }
         private bool AtVal(string VEmail)
         {
@@ -179,8 +179,14 @@ namespace HotelSystem
                         {
                             while (reader.Read())
                             {
-                                OutputList.Add(new TempRoom { Id = reader.GetInt32(reader.GetOrdinal("ID")), Booked = reader.GetByte(reader.GetOrdinal("Booked")), Db = reader.GetByte(reader.GetOrdinal("DBAccess")), Num = reader.GetChars(reader.GetOrdinal("RoomNumber")), Size = reader.GetString(reader.GetOrdinal("RoomSize")), Price = reader.GetDouble(reader.GetOrdinal("Price")), Notes = reader.GetString(reader.GetOrdinal("Notes")) });
-                                
+                                OutputList.Add(new TempRoom { Id = reader.GetInt32(reader.GetOrdinal("ID")),
+                                    Booked = reader.GetBoolean(reader.GetOrdinal("Booked")),
+                                    Db = reader.GetBoolean(reader.GetOrdinal("DBAccess")),
+                                    Num = reader.GetString(reader.GetOrdinal("RoomNumber")),
+                                    Size = reader.GetString(reader.GetOrdinal("RoomSize")),
+                                    Price = reader.GetDouble(reader.GetOrdinal("Price")),
+                                    Notes = reader.GetString(reader.GetOrdinal("Notes")) });
+
                             }
                         }
                     }
@@ -199,7 +205,7 @@ namespace HotelSystem
                         tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
                         tabnote.Text = OutputList[i].Notes;
                         tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
-                        tabprice.Text = Convert.ToString(OutputList[i].Price*diff.TotalDays);
+                        tabprice.Text = Convert.ToString(OutputList[i].Price * diff.TotalDays);
                         y = y + 1;
                     }
                     if (y == 7)
@@ -211,11 +217,11 @@ namespace HotelSystem
 
 
             }
-            
+
         }
         private bool RoomSearch(TempRoom room)
         {
-            if (DBCheck.Checked == true &&room.Db==0)
+            if (DBCheck.Checked && !room.Db)
             {
                 return false;
             }
@@ -234,15 +240,15 @@ namespace HotelSystem
         private string _size;
         private string _notes;
         private double _price;
-        private byte _booked;
-        private byte _db;
+        private bool _booked;
+        private bool _db;
 
         public double Price { get => _price; set => _price = value; }
         public string Notes { get => _notes; set => _notes = value; }
         public string Num { get => _num; set => _num = value; }
         public int Id { get => _id; set => _id = value; }
-        public byte Booked { get => _booked; set => _booked = value; }
-        public byte Db { get => _db; set => _db = value; }
+        public bool Booked { get => _booked; set => _booked = value; }
+        public bool Db { get => _db; set => _db = value; }
         public string Size { get => _size; set => _size = value; }
     }
 }
