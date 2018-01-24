@@ -195,7 +195,19 @@ namespace HotelSystem
                 Label tabnum;
                 Label tabnote;
                 Label tabprice;
+                var SearchList = new List<TempRoom>();
                 TimeSpan diff = dateTimePicker2.Value - dateTimePicker1.Value;
+                for (int n = 1; n < 8; n++)
+                {
+                    tabnum = (Label)tableLayoutPanel1.GetControlFromPosition(0, y);
+                    tabnum.Text = "";
+                    tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
+                    tabnote.Text = "";
+                    tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
+                    tabprice.Text = "";
+                    y++;
+                }
+                y = 1;
                 for (int i = 0; i < OutputList.Count; i++)
                 {
                     if (RoomSearch(OutputList[i]))
@@ -205,17 +217,18 @@ namespace HotelSystem
                         tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
                         tabnote.Text = OutputList[i].Notes;
                         tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
-                        tabprice.Text = Convert.ToString(OutputList[i].Price * diff.TotalDays);
+                        tabprice.Text = Convert.ToString(OutputList[i].Price * (diff.Days + 1));
                         y = y + 1;
+                        SearchList.Add(OutputList[i]);
                     }
+
                     if (y == 7)
                     {
                         break;
                     }
+                   
+
                 }
-
-
-
             }
 
         }
