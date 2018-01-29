@@ -217,7 +217,7 @@ namespace HotelSystem
                         tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
                         tabnote.Text = OutputList[i].Notes;
                         tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
-                        tabprice.Text = Convert.ToString(OutputList[i].Price * (diff.Days + 1));
+                        tabprice.Text = "£" + Convert.ToString(OutputList[i].Price * (diff.Days + 1));
                         y = y + 1;
                         SearchList.Add(OutputList[i]);
                     }
@@ -226,8 +226,6 @@ namespace HotelSystem
                     {
                         break;
                     }
-                   
-
                 }
             }
 
