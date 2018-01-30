@@ -33,7 +33,7 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
+            if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
             {
                 DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
             }
@@ -62,7 +62,7 @@ namespace HotelSystem
             string path = (AppDomain.CurrentDomain.BaseDirectory);
             return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
         }
-        private bool Validation(string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo)
+        private bool Validation(bool booking, string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo)
         {
             //FIRSTNAME START
             label35.Text = "";
@@ -147,9 +147,31 @@ namespace HotelSystem
                 label35.Text += "\r\nA size of room must be selected.";
             }
             //COMBO END
-
+            //CHECK START
+            if(booking)
+            {
+                if (checkcheck()!=1)
+                {
+                    end = false;
+                    label35.Text += "\r\nOnly one textbox must be checked.";
+                }
+            }
+            //CHECK END
             return end;
 
+        }
+        private int checkcheck()
+        {
+            CheckBox check;
+            int n=0;
+            for (int i=1;i<8;)
+            {
+                check = (CheckBox)tableLayoutPanel1.GetControlFromPosition(3, i);
+                if(check.Checked)
+                { n=n+1; }
+                
+            }
+            return n;
         }
         private bool AtVal(string VEmail)
         {
@@ -165,7 +187,7 @@ namespace HotelSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Validation(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
+            if (Validation(false,textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
             {
                 var OutputList = new List<TempRoom>();
                 string Link = LinkString();
