@@ -12,8 +12,10 @@ using System.Windows.Forms;
 
 namespace HotelSystem
 {
+
     public partial class BookingForm : Form
     {
+        public List<TempRoom> SearchList = new List<TempRoom>();
         public BookingForm()
         {
             InitializeComponent();
@@ -36,24 +38,57 @@ namespace HotelSystem
             if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
             {
                 DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+                DBBookingAdd(SearchList[(checkcol()-1)]);
             }
         }
-        private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
+        private void DBBookingAdd(TempRoom choiceroom)
         {
-
+            TimeSpan diff = dateTimePicker2.Value - dateTimePicker1.Value;
             string ConStr = LinkString();
             using (SqlConnection DB = new SqlConnection(ConStr))
             {
                 DB.Open();
                 using (SqlCommand Comm = new SqlCommand(
-                "INSERT INTO Visitors (FName, SName, ContactNo, Email, Notes) VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
+                "INSERT INTO Bookings (VisitStart, VisitEnd, Price, RoomID, VisitorID) VALUES(@VisitStart, @VisitEnd, @Price, @RoomID, @VisitorID)", DB))
+                {
+                    Comm.Parameters.Add(new SqlParameter("VisitStart", dateTimePicker1.Value));
+                    Comm.Parameters.Add(new SqlParameter("VisitEnd", dateTimePicker2.Value));
+                    Comm.Parameters.Add(new SqlParameter("Price", choiceroom.Price*(diff.Days+1)));
+                    Comm.Parameters.Add(new SqlParameter("RoomID", choiceroom.Id));
+                    Comm.Parameters.Add(new SqlParameter("VisitorID",VID));
+                    Comm.ExecuteNonQuery();
+                }
+            }
+        }
+        private int checkcol()
+        {
+            CheckBox check;
+            for (int i = 1; i < 8;i++)
+            {
+                check = (CheckBox)tableLayoutPanel1.GetControlFromPosition(3, i);
+                if (check.Checked)
+                { return i; }
+            }
+            return -1;
+        }
+        public int VID;
+        private void DBVisitorAdd(string FName, string SName, string Numb, string VEmail, string Notes)
+        {
+           
+            string ConStr = LinkString();
+            using (SqlConnection DB = new SqlConnection(ConStr))
+            {
+                DB.Open();
+                using (SqlCommand Comm = new SqlCommand(
+                "INSERT INTO Visitors (FName, SName, ContactNo, Email, Notes) OUTPUT INSERTED.VisitorID VALUES(@FName, @SName, @ContactNo, @Email, @Notes)", DB))
                 {
                     Comm.Parameters.Add(new SqlParameter("FName", FName));
                     Comm.Parameters.Add(new SqlParameter("SName", SName));
                     Comm.Parameters.Add(new SqlParameter("ContactNo", Numb));
                     Comm.Parameters.Add(new SqlParameter("Email", VEmail));
                     Comm.Parameters.Add(new SqlParameter("Notes", Notes));
-                    Comm.ExecuteNonQuery();
+                    
+                    VID = (int)Comm.ExecuteScalar();
                 }
             }
         }
@@ -164,7 +199,7 @@ namespace HotelSystem
         {
             CheckBox check;
             int n=0;
-            for (int i=1;i<8;)
+            for (int i=1;i<8;i++)
             {
                 check = (CheckBox)tableLayoutPanel1.GetControlFromPosition(3, i);
                 if(check.Checked)
@@ -217,7 +252,7 @@ namespace HotelSystem
                 Label tabnum;
                 Label tabnote;
                 Label tabprice;
-                var SearchList = new List<TempRoom>();
+                
                 TimeSpan diff = dateTimePicker2.Value - dateTimePicker1.Value;
                 for (int n = 1; n < 8; n++)
                 {
