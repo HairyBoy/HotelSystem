@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace HotelSystem
 {
@@ -84,5 +85,57 @@ namespace HotelSystem
             Form3 Form3 = new Form3();
             Form3.ShowDialog();
         }
+        private string LinkString()
+        {
+            string path = (AppDomain.CurrentDomain.BaseDirectory);
+            return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
+        }
+        private void CalUpdate()
+        {
+            var OutputList = new List<Booking>();
+            string Link = LinkString();
+            using (SqlConnection DB = new SqlConnection(Link))
+            using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, VisitStart, VisitEnd, Price, Notes, RoomID, VisitorID FROM Bookings", DB))
+            {
+                DB.Open();
+                using (SqlDataReader reader = Comm.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            OutputList.Add(new Booking
+                            {
+                                ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                                VStart = reader.GetString(reader.GetOrdinal("VisitStart")),
+                                VEnd = reader.GetString(reader.GetOrdinal("VisitEnd")),
+                                Price = reader.GetDouble(reader.GetOrdinal("Price")),
+                                Notes = reader.GetString(reader.GetOrdinal("Notes")),
+                                RID = reader.GetInt32(reader.GetOrdinal("RoomID")),
+                                VID = reader.GetInt32(reader.GetOrdinal("VisitorID"))
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public class Booking
+    {
+        private int _ID;
+        private string _VStart;
+        private string _VEnd;
+        private double _Price;
+        private string _Notes;
+        private int _RID;
+        private int _VID;
+
+        public int ID { get => _ID; set => _ID = value; }
+        public string VStart { get => _VStart; set => _VStart = value; }
+        public string VEnd { get => _VEnd; set => _VEnd = value; }
+        public double Price { get => _Price; set => _Price = value; }
+        public string Notes { get => _Notes; set => _Notes = value; }
+        public int RID { get => _RID; set => _RID = value; }
+        public int VID { get => _VID; set => _VID = value; }
     }
 }
