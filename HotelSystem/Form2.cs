@@ -36,6 +36,7 @@ namespace HotelSystem
             }
             //TEST//////////////////////////////////////
         }
+        public int r;
         private void UIUpdate()
         {
             using (System.IO.StreamReader reader = new System.IO.StreamReader("C:\\Program Files\\HotelSystem\\config.txt"))
@@ -96,8 +97,8 @@ namespace HotelSystem
             string Link = LinkString();
             using (SqlConnection DB = new SqlConnection(Link))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
-                " Bookings.Price, Bookings.Notes, Bookings.RoomID, Bookings.VisitorID," +
-                " Rooms.RoomNumber FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID", DB))
+                " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
+                " Rooms.RoomNumber FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
             {
                 DB.Open();
                 using (SqlDataReader reader = Comm.ExecuteReader())
@@ -109,17 +110,20 @@ namespace HotelSystem
                             OutputList.Add(new Booking
                             {
                                 ID = reader.GetInt32(reader.GetOrdinal("ID")),
-                                VStart = reader.GetString(reader.GetOrdinal("VisitStart")),
-                                VEnd = reader.GetString(reader.GetOrdinal("VisitEnd")),
+                                VStart = reader.GetDateTime(reader.GetOrdinal("VisitStart")),
+                                VEnd = reader.GetDateTime(reader.GetOrdinal("VisitEnd")),
                                 Price = reader.GetDouble(reader.GetOrdinal("Price")),
-                                Notes = reader.GetString(reader.GetOrdinal("Notes")),
                                 RID = reader.GetInt32(reader.GetOrdinal("RoomID")),
                                 VID = reader.GetInt32(reader.GetOrdinal("VisitorID")),
-                                RoomNumber = reader.GetInt32(reader.GetOrdinal("RoomNumber"))
+                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber"))
                             });
                         }
                     }
                 }
+            }
+            for (int i = 1; i < 16&&i<OutputList.Count; i++)
+            {
+                ((RichTextBox)Calendar.GetControlFromPosition(0, i)).Text = OutputList[(i-1) + r].RoomNumber;
             }
         }
 
@@ -127,25 +131,37 @@ namespace HotelSystem
         {
             CalUpdate();
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (r!=0){
+                r = r - 1;
+                CalUpdate();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            r = r + 1;
+            CalUpdate();
+        }
     }
     public class Booking
     {
         private int _ID;
-        private string _VStart;
-        private string _VEnd;
+        private DateTime _VStart;
+        private DateTime _VEnd;
         private double _Price;
-        private string _Notes;
         private int _RID;
         private int _VID;
-        private int _RoomNumber;
+        private string _RoomNumber;
 
         public int ID { get => _ID; set => _ID = value; }
-        public string VStart { get => _VStart; set => _VStart = value; }
-        public string VEnd { get => _VEnd; set => _VEnd = value; }
+        public DateTime VStart { get => _VStart; set => _VStart = value; }
+        public DateTime VEnd { get => _VEnd; set => _VEnd = value; }
         public double Price { get => _Price; set => _Price = value; }
-        public string Notes { get => _Notes; set => _Notes = value; }
         public int RID { get => _RID; set => _RID = value; }
         public int VID { get => _VID; set => _VID = value; }
-        public int RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
+        public string RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
     }
 }

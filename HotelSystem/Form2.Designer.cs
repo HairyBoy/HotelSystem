@@ -269,6 +269,7 @@
             this.button2.TabIndex = 10;
             this.button2.Text = "⯆";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Calendar
             // 
@@ -1988,6 +1989,7 @@
             this.button4.TabIndex = 13;
             this.button4.Text = "⯅";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form2
             // 
