@@ -202,6 +202,7 @@
             this.Refresh.TabIndex = 2;
             this.Refresh.Text = "Refresh Calendar";
             this.Refresh.UseVisualStyleBackColor = true;
+            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // AddRoom
             // 

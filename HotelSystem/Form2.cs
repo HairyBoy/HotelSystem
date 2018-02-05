@@ -95,7 +95,9 @@ namespace HotelSystem
             var OutputList = new List<Booking>();
             string Link = LinkString();
             using (SqlConnection DB = new SqlConnection(Link))
-            using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, VisitStart, VisitEnd, Price, Notes, RoomID, VisitorID FROM Bookings", DB))
+            using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
+                " Bookings.Price, Bookings.Notes, Bookings.RoomID, Bookings.VisitorID," +
+                " Rooms.RoomNumber FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID", DB))
             {
                 DB.Open();
                 using (SqlDataReader reader = Comm.ExecuteReader())
@@ -112,12 +114,18 @@ namespace HotelSystem
                                 Price = reader.GetDouble(reader.GetOrdinal("Price")),
                                 Notes = reader.GetString(reader.GetOrdinal("Notes")),
                                 RID = reader.GetInt32(reader.GetOrdinal("RoomID")),
-                                VID = reader.GetInt32(reader.GetOrdinal("VisitorID"))
+                                VID = reader.GetInt32(reader.GetOrdinal("VisitorID")),
+                                RoomNumber = reader.GetInt32(reader.GetOrdinal("RoomNumber"))
                             });
                         }
                     }
                 }
             }
+        }
+
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            CalUpdate();
         }
     }
     public class Booking
@@ -129,6 +137,7 @@ namespace HotelSystem
         private string _Notes;
         private int _RID;
         private int _VID;
+        private int _RoomNumber;
 
         public int ID { get => _ID; set => _ID = value; }
         public string VStart { get => _VStart; set => _VStart = value; }
@@ -137,5 +146,6 @@ namespace HotelSystem
         public string Notes { get => _Notes; set => _Notes = value; }
         public int RID { get => _RID; set => _RID = value; }
         public int VID { get => _VID; set => _VID = value; }
+        public int RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
     }
 }
