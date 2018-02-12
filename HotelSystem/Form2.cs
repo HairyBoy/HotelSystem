@@ -14,6 +14,7 @@ namespace HotelSystem
     public partial class Form2 : Form
     {
         public int iv;
+        public DateTime[] Dates = new DateTime[5];
         public Form2()
         {
             InitializeComponent();
@@ -132,18 +133,24 @@ namespace HotelSystem
                     {
                         int b = 0;
                         int c = 1;
+
                         while (reader.Read())
                         {
-                            if (b<=15+iv&&b>=iv)
+                            if (b<=14+iv&&b>=iv)
                             {
                                 ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = reader.GetString(reader.GetOrdinal("RoomNumber"));
                                 c++;
                             }
                             b++;
-                        }   
+                        }
+                        if (c < 16)
+                        {
+                            ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = "";
+                        }
                     }
                 }
             }
+
         }
 
         private void Refresh_Click(object sender, EventArgs e)
