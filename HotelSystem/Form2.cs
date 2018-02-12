@@ -13,16 +13,18 @@ namespace HotelSystem
 {
     public partial class Form2 : Form
     {
-
+        public int iv;
         public Form2()
         {
             InitializeComponent();
+             iv = 0;
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
             BookingForm BookingForm = new BookingForm();
             UIUpdate();
+            CalUpdate();
             ResetDates(0);
             RichTextBox Rich;
             //TEST///////////////////////////////////////
@@ -36,7 +38,6 @@ namespace HotelSystem
             }
             //TEST//////////////////////////////////////
         }
-        public int r;
         private void UIUpdate()
         {
             using (System.IO.StreamReader reader = new System.IO.StreamReader("C:\\Program Files\\HotelSystem\\config.txt"))
@@ -94,8 +95,8 @@ namespace HotelSystem
         private void CalUpdate()
         {
             var OutputList = new List<Booking>();
-            string Link = LinkString();
-            using (SqlConnection DB = new SqlConnection(Link))
+
+            using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
                 " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
                 " Rooms.RoomNumber FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
@@ -121,9 +122,27 @@ namespace HotelSystem
                     }
                 }
             }
-            for (int i = 1; i < 16&&i<OutputList.Count; i++)
+            using (SqlConnection DB = new SqlConnection(LinkString()))
+            using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber FROM Rooms", DB))
             {
-                ((RichTextBox)Calendar.GetControlFromPosition(0, i)).Text = OutputList[(i-1) + r].RoomNumber;
+                DB.Open();
+                using (SqlDataReader reader = Comm.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        int b = 0;
+                        int c = 1;
+                        while (reader.Read())
+                        {
+                            if (b<=15+iv&&b>=iv)
+                            {
+                                ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = reader.GetString(reader.GetOrdinal("RoomNumber"));
+                                c++;
+                            }
+                            b++;
+                        }   
+                    }
+                }
             }
         }
 
@@ -134,15 +153,15 @@ namespace HotelSystem
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if (r!=0){
-                r = r - 1;
+            if (iv!=0){
+                iv = iv - 1;
                 CalUpdate();
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            r = r + 1;
+            iv = iv + 1;
             CalUpdate();
         }
     }

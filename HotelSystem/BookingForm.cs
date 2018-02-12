@@ -31,6 +31,7 @@ namespace HotelSystem
         {
             Form2 HomeScreen = Application.OpenForms["Form2"] as Form2;
             HomeScreen.Show();
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
