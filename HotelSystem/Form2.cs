@@ -14,7 +14,7 @@ namespace HotelSystem
     public partial class Form2 : Form
     {
         public int iv;
-        public DateTime[] Dates = new DateTime[5];
+        public DateTime[] Dates = new DateTime[6];
         public Form2()
         {
             InitializeComponent();
@@ -52,7 +52,7 @@ namespace HotelSystem
         {
         
         }
-        int displace = 0;
+        public int displace = 0;
         private void ResetDates(int preset)
         {
             displace = displace + (preset);
@@ -60,6 +60,7 @@ namespace HotelSystem
             
             for (int i = 1; i < 8; i++)
             {
+                Dates[i - 1] = DAnchor.AddDays(i - 1);
                 ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i-1).ToString("dd.MM.dddd");
             }
         }
