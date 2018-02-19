@@ -14,7 +14,7 @@ namespace HotelSystem
     public partial class Form2 : Form
     {
         public int iv;
-        public DateTime[] Dates = new DateTime[6];
+        public DateTime[] Dates = new DateTime[7];
         public Form2()
         {
             InitializeComponent();
@@ -27,17 +27,6 @@ namespace HotelSystem
             UIUpdate();
             CalUpdate();
             ResetDates(0);
-            RichTextBox Rich;
-            //TEST///////////////////////////////////////
-            for (int x = 1; x < 8; x++)
-            {
-                for (int y = 1; y < 16; y++)
-                {
-                    Rich = (RichTextBox)Calendar.GetControlFromPosition(x,y);
-                    Rich.Text = "Test";
-                }
-            }
-            //TEST//////////////////////////////////////
         }
         private void UIUpdate()
         {
@@ -63,6 +52,7 @@ namespace HotelSystem
                 Dates[i - 1] = DAnchor.AddDays(i - 1);
                 ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i-1).ToString("dd.MM.dddd");
             }
+            CalUpdate();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -151,6 +141,24 @@ namespace HotelSystem
                     }
                 }
             }
+            //
+            int n;
+            
+
+            RichTextBox Rich;
+            for (int x = 1; x < 8; x++)
+            {
+                for (int y = 1; y < n; y++)
+                {
+                    if (OutputList[(y - 1) + iv].VStart.Ticks < Dates[x-1].Ticks && Dates[x - 1].Ticks < OutputList[(y - 1) + iv].VEnd.Ticks)
+                    {
+                        Rich = (RichTextBox)Calendar.GetControlFromPosition(x, y);
+                        Rich.Text = "Test";
+                    }
+                }
+            }
+
+
 
         }
 
