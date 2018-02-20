@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace HotelSystem
 {
@@ -15,10 +16,12 @@ namespace HotelSystem
     {
         public int iv;
         public DateTime[] Dates = new DateTime[7];
+        public DateTime DAnchor = DateTime.Now.Date;
+
         public Form2()
         {
             InitializeComponent();
-             iv = 0;
+            iv = 0;
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -26,7 +29,6 @@ namespace HotelSystem
             BookingForm BookingForm = new BookingForm();
             UIUpdate();
             CalUpdate();
-            ResetDates(0);
         }
         private void UIUpdate()
         {
@@ -41,30 +43,20 @@ namespace HotelSystem
         {
         
         }
-        public int displace = 0;
-        private void ResetDates(int preset)
-        {
-            displace = displace + (preset);
-            DateTime DAnchor = DateTime.Now.AddDays(7*displace);
-            
-            for (int i = 1; i < 8; i++)
-            {
-                Dates[i - 1] = DAnchor.AddDays(i - 1);
-                ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i-1).ToString("dd.MM.dddd");
-            }
-            CalUpdate();
-        }
 
+    
         private void button1_Click(object sender, EventArgs e)
             //RIGHT DATE
         {
-            ResetDates(1);
+            DAnchor = DAnchor.AddDays(7);
+            CalUpdate();
         }
 
         private void button3_Click(object sender, EventArgs e)
             //LEFT DATE
         {
-            ResetDates(-1);
+            DAnchor = DAnchor.AddDays(-7);
+            CalUpdate();
         }
 
         private void BookRoom_Click(object sender, EventArgs e)
@@ -86,12 +78,20 @@ namespace HotelSystem
         }
         private void CalUpdate()
         {
+            ClearTable();
+            //Dates refresh
+                for (int i = 1; i < 8; i++)
+                {
+                    Dates[i - 1] = DAnchor.AddDays(i - 1);
+                    ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i - 1).ToString("dd.MM.dddd");
+                }
+            
+            //DatesRefresh
             var OutputList = new List<Booking>();
-
             using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
                 " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
-                " Rooms.RoomNumber FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
+                " Rooms.RoomNumber, Visitors.FName, Visitors.SName FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
             {
                 DB.Open();
                 using (SqlDataReader reader = Comm.ExecuteReader())
@@ -103,12 +103,14 @@ namespace HotelSystem
                             OutputList.Add(new Booking
                             {
                                 ID = reader.GetInt32(reader.GetOrdinal("ID")),
-                                VStart = reader.GetDateTime(reader.GetOrdinal("VisitStart")),
-                                VEnd = reader.GetDateTime(reader.GetOrdinal("VisitEnd")),
+                                VStart = reader.GetDateTime(reader.GetOrdinal("VisitStart")).Date,
+                                VEnd = reader.GetDateTime(reader.GetOrdinal("VisitEnd")).Date,
                                 Price = reader.GetDouble(reader.GetOrdinal("Price")),
                                 RID = reader.GetInt32(reader.GetOrdinal("RoomID")),
                                 VID = reader.GetInt32(reader.GetOrdinal("VisitorID")),
-                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber"))
+                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber")),
+                                FName = reader.GetString(reader.GetOrdinal("FName")),
+                                SName = reader.GetString(reader.GetOrdinal("SName"))
                             });
                         }
                     }
@@ -134,34 +136,83 @@ namespace HotelSystem
                             }
                             b++;
                         }
-                        if (c < 16)
+                    }
+                }
+            }
+            RichTextBox Rich;
+            bool checkie;
+            int XVal=0;
+            bool check = true;
+            for (int m = 0; m < OutputList.Count; m++)
+            {
+                check = true;
+                checkie = false;
+                for (int numplace=1; numplace < 16; numplace++)
+                {
+                    if(Calendar.GetControlFromPosition(0, numplace).Text == OutputList[m].RoomNumber) {
+                        checkie = true;
+                        XVal = numplace;
+                        break; }
+                }
+                if (checkie)
+                {
+                    for (int D = 1; D < 8; D++)
+                    {
+                        if (DateTime.Compare(OutputList[m].VStart, Dates[D-1]) <= 0 && DateTime.Compare(OutputList[m].VEnd, Dates[D-1]) >= 0)
                         {
-                            ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = "";
+                             Rich = (RichTextBox)Calendar.GetControlFromPosition(D, XVal);
+                                if (check)
+                                {
+                                    Rich.Text = OutputList[m].FName;
+                                    check = false;
+                                }
+                             Rich.BackColor = Color.Green;
                         }
                     }
                 }
             }
-            //
-            int n;
-            
-
-            RichTextBox Rich;
-            for (int x = 1; x < 8; x++)
-            {
-                for (int y = 1; y < n; y++)
-                {
-                    if (OutputList[(y - 1) + iv].VStart.Ticks < Dates[x-1].Ticks && Dates[x - 1].Ticks < OutputList[(y - 1) + iv].VEnd.Ticks)
-                    {
-                        Rich = (RichTextBox)Calendar.GetControlFromPosition(x, y);
-                        Rich.Text = "Test";
-                    }
-                }
-            }
-
 
 
         }
+        /////////////////////////////////////////////////
+        private void Calendar_MouseClick(object sender, MouseEventArgs e)
+        {
+            int row = 0;
+            int verticalOffset = 0;
+            foreach (int h in Calendar.GetRowHeights())
+            {
+                int column = 0;
+                int horizontalOffset = 0;
+                foreach (int w in Calendar.GetColumnWidths())
+                {
+                    Rectangle rectangle = new Rectangle(horizontalOffset, verticalOffset, w, h);
+                    if (rectangle.Contains(e.Location))
+                    {
+                        Trace.WriteLine(String.Format("row {0}, column {1} was clicked", row, column));
+                        MessageBox.Show(Convert.ToString(row) + Convert.ToString(column));
+                        return;
+                    }
+                    horizontalOffset += w;
+                    column++;
+                }
+                verticalOffset += h;
+                row++;
+            }
+        }
+        /////////////////////////////////////////////////
+        private void ClearTable()
+        {
+            RichTextBox Rich;
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
 
+                        Rich = (RichTextBox)Calendar.GetControlFromPosition(x, y);
+                        Rich.Text = "";
+                }
+            }
+        }
         private void Refresh_Click(object sender, EventArgs e)
         {
             CalUpdate();
@@ -190,6 +241,8 @@ namespace HotelSystem
         private int _RID;
         private int _VID;
         private string _RoomNumber;
+        private string _FName;
+        private string _SName;
 
         public int ID { get => _ID; set => _ID = value; }
         public DateTime VStart { get => _VStart; set => _VStart = value; }
@@ -198,5 +251,7 @@ namespace HotelSystem
         public int RID { get => _RID; set => _RID = value; }
         public int VID { get => _VID; set => _VID = value; }
         public string RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
+        public string FName { get => _FName; set => _FName = value; }
+        public string SName { get => _SName; set => _SName = value; }
     }
 }
