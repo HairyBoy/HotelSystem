@@ -76,17 +76,8 @@ namespace HotelSystem
             string path = (AppDomain.CurrentDomain.BaseDirectory);
             return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
         }
-        private void CalUpdate()
+        private List<Booking> ViewBooks()
         {
-            ClearTable();
-            //Dates refresh
-                for (int i = 1; i < 8; i++)
-                {
-                    Dates[i - 1] = DAnchor.AddDays(i - 1);
-                    ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i - 1).ToString("dd.MM.dddd");
-                }
-            
-            //DatesRefresh
             var OutputList = new List<Booking>();
             using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
@@ -116,6 +107,21 @@ namespace HotelSystem
                     }
                 }
             }
+            return OutputList;
+        }
+        private void CalUpdate()
+        {
+            ClearTable();
+            //Dates refresh
+                for (int i = 1; i < 8; i++)
+                {
+                    Dates[i - 1] = DAnchor.AddDays(i - 1);
+                    ((RichTextBox)Calendar.GetControlFromPosition(i, 0)).Text = DAnchor.AddDays(i - 1).ToString("dd.MM.dddd");
+                }
+            
+            //DatesRefresh
+
+            var OutputList = ViewBooks();
             using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber FROM Rooms", DB))
             {
@@ -175,28 +181,55 @@ namespace HotelSystem
 
         }
         /////////////////////////////////////////////////
-        private void Calendar_MouseClick(object sender, MouseEventArgs e)
+        Point GetRowColIndex(TableLayoutPanel tlp, Point point)
         {
-            int row = 0;
-            int verticalOffset = 0;
-            foreach (int h in Calendar.GetRowHeights())
-            {
-                int column = 0;
-                int horizontalOffset = 0;
-                foreach (int w in Calendar.GetColumnWidths())
+            int w = tlp.Width;
+            int h = tlp.Height;
+            int[] widths = tlp.GetColumnWidths();
+
+            int i;
+            for (i = widths.Length - 1; i >= 0 && point.X < w; i--)
+                w -= widths[i];
+            int col = i + 1;
+
+            int[] heights = tlp.GetRowHeights();
+            for (i = heights.Length - 1; i >= 0 && point.Y < h; i--)
+                h -= heights[i];
+
+            int row = i + 1;
+
+            return new Point(col, row);
+        }
+        private void Calendar_Click(object sender, EventArgs e)
+        {
+            var OutputList = RoomGrab();
+            Point cellPos = GetRowColIndex(Calendar, Calendar.PointToClient(Cursor.Position));
+            
+            if (cellPos.X == 0 && Calendar.GetControlFromPosition(cellPos.X,cellPos.Y).Text != "") {
+                Room Obj = OutputList[cellPos.Y + (iv - 1)];
+                switch (MessageBox.Show("\r\nRoom: "+Obj.RoomNumber+"\r\nPrice:" + Obj.Price + "\r\nSize: "+Obj.RoomSize+ "\r\nNotes: "+Obj.Notes + "\r\nDelete?", "Room " + Obj.RoomNumber + " Details", MessageBoxButtons.YesNo))
                 {
-                    Rectangle rectangle = new Rectangle(horizontalOffset, verticalOffset, w, h);
-                    if (rectangle.Contains(e.Location))
-                    {
-                        Trace.WriteLine(String.Format("row {0}, column {1} was clicked", row, column));
-                        MessageBox.Show(Convert.ToString(row) + Convert.ToString(column));
-                        return;
-                    }
-                    horizontalOffset += w;
-                    column++;
+                    case DialogResult.Yes:
+                        // "Yes" processing
+                        break;
+
+                    case DialogResult.No:
+                        // "No" processing
+                        break;
                 }
-                verticalOffset += h;
-                row++;
+            }
+           else if (cellPos.Y != 0 && Calendar.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor == Color.Green)
+            {
+                switch (MessageBox.Show("Do you want to create a new file?", "WonderWord", MessageBoxButtons.YesNo))
+                {
+                    case DialogResult.Yes:
+                        // "Yes" processing
+                        break;
+
+                    case DialogResult.No:
+                        // "No" processing
+                        break;
+                }
             }
         }
         /////////////////////////////////////////////////
@@ -231,6 +264,34 @@ namespace HotelSystem
             iv = iv + 1;
             CalUpdate();
         }
+        private List<Room> RoomGrab()
+        {
+            var OutputList = new List<Room>();
+            using (SqlConnection DB = new SqlConnection(LinkString()))
+            using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber, RoomSize, Price, Notes, KeycardNo FROM Rooms", DB))
+            {
+                DB.Open();
+                using (SqlDataReader reader = Comm.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            OutputList.Add(new Room
+                            {
+                                ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber")),
+                                RoomSize = reader.GetString(reader.GetOrdinal("RoomSize")),
+                                Notes = reader.GetString(reader.GetOrdinal("Notes")),
+                                KeyCard = reader.GetString(reader.GetOrdinal("KeycardNo")),
+                                Price = reader.GetDouble(reader.GetOrdinal("Price")),
+                            });
+                        }
+                    }
+                }
+            }
+            return OutputList;
+        }
     }
     public class Booking
     {
@@ -253,5 +314,16 @@ namespace HotelSystem
         public string RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
         public string FName { get => _FName; set => _FName = value; }
         public string SName { get => _SName; set => _SName = value; }
+    }
+    public class Room:Booking
+    {
+        private string _RoomSize;
+        private string _KeyCard;
+        private string _Notes;
+
+
+        public string Notes { get => _Notes; set => _Notes = value; }
+        public string KeyCard { get => _KeyCard; set => _KeyCard = value; }
+        public string RoomSize { get => _RoomSize; set => _RoomSize = value; }
     }
 }

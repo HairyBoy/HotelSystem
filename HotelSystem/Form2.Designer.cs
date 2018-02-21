@@ -433,6 +433,7 @@
             this.Calendar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.Calendar.Size = new System.Drawing.Size(835, 433);
             this.Calendar.TabIndex = 11;
+            this.Calendar.Click += new System.EventHandler(this.Calendar_Click);
             // 
             // richTextBox128
             // 
