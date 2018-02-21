@@ -82,7 +82,7 @@ namespace HotelSystem
             using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
                 " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
-                " Rooms.RoomNumber, Visitors.FName, Visitors.SName FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
+                " Rooms.RoomNumber, Visitors.FName, Visitors.SName,Visitors.ContactNo,Visitors.Email FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
             {
                 DB.Open();
                 using (SqlDataReader reader = Comm.ExecuteReader())
@@ -101,7 +101,9 @@ namespace HotelSystem
                                 VID = reader.GetInt32(reader.GetOrdinal("VisitorID")),
                                 RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber")),
                                 FName = reader.GetString(reader.GetOrdinal("FName")),
-                                SName = reader.GetString(reader.GetOrdinal("SName"))
+                                SName = reader.GetString(reader.GetOrdinal("SName")),
+                                ContactNo = reader.GetString(reader.GetOrdinal("ContactNo")),
+                                Email = reader.GetString(reader.GetOrdinal("Email"))
                             });
                         }
                     }
@@ -122,27 +124,21 @@ namespace HotelSystem
             //DatesRefresh
 
             var OutputList = ViewBooks();
-            using (SqlConnection DB = new SqlConnection(LinkString()))
-            using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber FROM Rooms", DB))
-            {
-                DB.Open();
-                using (SqlDataReader reader = Comm.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                    {
-                        int b = 0;
-                        int c = 1;
+            var RoomList = RoomGrab();
 
-                        while (reader.Read())
-                        {
-                            if (b<=14+iv&&b>=iv)
-                            {
-                                ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = reader.GetString(reader.GetOrdinal("RoomNumber"));
-                                c++;
-                            }
-                            b++;
-                        }
+            if (RoomList.Count > 0)
+            {
+                int b = 0;
+                int c = 1;
+
+                foreach (Room room in RoomList)
+                {
+                    if (b <= 14 + iv && b >= iv)
+                    {
+                        ((RichTextBox)Calendar.GetControlFromPosition(0, c)).Text = room.RoomNumber;
+                        c++;
                     }
+                    b++;
                 }
             }
             RichTextBox Rich;
@@ -203,34 +199,67 @@ namespace HotelSystem
         private void Calendar_Click(object sender, EventArgs e)
         {
             var OutputList = RoomGrab();
+            var BookList = ViewBooks();
             Point cellPos = GetRowColIndex(Calendar, Calendar.PointToClient(Cursor.Position));
+            bool RGotsBooks = false;
             
             if (cellPos.X == 0 && Calendar.GetControlFromPosition(cellPos.X,cellPos.Y).Text != "") {
                 Room Obj = OutputList[cellPos.Y + (iv - 1)];
-                switch (MessageBox.Show("\r\nRoom: "+Obj.RoomNumber+"\r\nPrice:" + Obj.Price + "\r\nSize: "+Obj.RoomSize+ "\r\nNotes: "+Obj.Notes + "\r\nDelete?", "Room " + Obj.RoomNumber + " Details", MessageBoxButtons.YesNo))
+                switch (MessageBox.Show("\r\nRoom: "+Obj.RoomNumber+"\r\nPrice: £" + Obj.Price + "\r\nSize: "+Obj.RoomSize+ "\r\nNotes: "+Obj.Notes + "\r\nDelete?", "Room " + Obj.RoomNumber + " Details", MessageBoxButtons.YesNo))
                 {
                     case DialogResult.Yes:
-                        // "Yes" processing
-                        break;
-
-                    case DialogResult.No:
-                        // "No" processing
+                        for (int n = 0; n < BookList.Count; n++)
+                        {
+                            if (Obj.ID == BookList[n].RID)
+                            {
+                                RGotsBooks = true;
+                            }
+                        }
+                        if (!RGotsBooks)
+                        {
+                            using (SqlConnection DB = new SqlConnection(LinkString()))
+                            using (SqlCommand Comm = new SqlCommand("DELETE FROM Rooms WHERE RoomID='" + Obj.ID + "'", DB))
+                            {
+                                DB.Open();
+                                Comm.ExecuteNonQuery();
+                                DB.Close();
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Cannot delete a room when it has bookings.","Oh no!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                         break;
                 }
             }
-           else if (cellPos.Y != 0 && Calendar.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor == Color.Green)
+           else if (Calendar.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor == Color.Green)
             {
-                switch (MessageBox.Show("Do you want to create a new file?", "WonderWord", MessageBoxButtons.YesNo))
+                Booking Book=BookList[0];
+                for (int i = 0; i < BookList.Count; i++)
+                {
+                    if(DateTime.Compare(BookList[i].VStart, Dates[cellPos.X-1]) <= 0 && DateTime.Compare(BookList[i].VEnd, Dates[cellPos.X-1]) >= 0&&BookList[i].RoomNumber == Calendar.GetControlFromPosition(0, cellPos.Y).Text)
+                    {
+                        Book = BookList[i];
+                        break;
+                    }
+                }
+                
+                switch (MessageBox.Show("\r\nVisitorName: " + Book.FName+" "+ Book.SName + "\r\nPrice: £" + Book.Price + "\r\nRoom Number: " + Book.RoomNumber + "\r\nVisit Length: " + Book.VStart +" - "+ Book.VEnd +"\r\nEmail:"+Book.Email+ "\r\nContact Number: "+ Book.ContactNo + "\r\nDelete?",  Book.SName + "'s visit", MessageBoxButtons.YesNo))
                 {
                     case DialogResult.Yes:
-                        // "Yes" processing
-                        break;
+                        using (SqlConnection DB = new SqlConnection(LinkString()))
+                        using (SqlCommand Comm = new SqlCommand("DELETE FROM Bookings WHERE BookingID='" + Book.ID + "'", DB))
+                        {
+                            DB.Open();
+                            Comm.ExecuteNonQuery();
+                            DB.Close();
+                        }
 
-                    case DialogResult.No:
-                        // "No" processing
                         break;
                 }
+
             }
+            CalUpdate();
         }
         /////////////////////////////////////////////////
         private void ClearTable()
@@ -243,6 +272,7 @@ namespace HotelSystem
 
                         Rich = (RichTextBox)Calendar.GetControlFromPosition(x, y);
                         Rich.Text = "";
+                        Rich.BackColor = SystemColors.Control;
                 }
             }
         }
@@ -304,6 +334,8 @@ namespace HotelSystem
         private string _RoomNumber;
         private string _FName;
         private string _SName;
+        private string _Email;
+        private string _ContactNo;
 
         public int ID { get => _ID; set => _ID = value; }
         public DateTime VStart { get => _VStart; set => _VStart = value; }
@@ -314,6 +346,8 @@ namespace HotelSystem
         public string RoomNumber { get => _RoomNumber; set => _RoomNumber = value; }
         public string FName { get => _FName; set => _FName = value; }
         public string SName { get => _SName; set => _SName = value; }
+        public string Email { get => _Email; set => _Email = value; }
+        public string ContactNo { get => _ContactNo; set => _ContactNo = value; }
     }
     public class Room:Booking
     {
