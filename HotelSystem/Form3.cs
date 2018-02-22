@@ -22,6 +22,14 @@ namespace HotelSystem
 
         private void Form3_Load(object sender, EventArgs e)
         {
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            using (System.IO.StreamReader reader = new System.IO.StreamReader("C:\\Program Files\\HotelSystem\\config.txt"))
+            {
+                reader.ReadLine();
+                reader.ReadLine();
+                reader.ReadLine();
+                this.BackColor = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
+            }
             string[] combo = new string[] { "Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other" };
             comboBox1.Items.AddRange(combo);
             this.FormClosing += new FormClosingEventHandler(BookingForm_Closing);
@@ -132,6 +140,11 @@ namespace HotelSystem
                 }
             }
             return temp;
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

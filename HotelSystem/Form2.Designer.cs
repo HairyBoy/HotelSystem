@@ -32,7 +32,6 @@
             this.BookRoom = new System.Windows.Forms.Button();
             this.Refresh = new System.Windows.Forms.Button();
             this.AddRoom = new System.Windows.Forms.Button();
-            this.Save = new System.Windows.Forms.Button();
             this.Settings = new System.Windows.Forms.Button();
             this.HotelName = new System.Windows.Forms.Label();
             this.HotelNumber = new System.Windows.Forms.Label();
@@ -238,9 +237,9 @@
             // Refresh
             // 
             this.Refresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Refresh.Location = new System.Drawing.Point(496, 13);
+            this.Refresh.Location = new System.Drawing.Point(181, 459);
             this.Refresh.Name = "Refresh";
-            this.Refresh.Size = new System.Drawing.Size(163, 45);
+            this.Refresh.Size = new System.Drawing.Size(125, 41);
             this.Refresh.TabIndex = 2;
             this.Refresh.Text = "Refresh Calendar";
             this.Refresh.UseVisualStyleBackColor = true;
@@ -249,7 +248,7 @@
             // AddRoom
             // 
             this.AddRoom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.AddRoom.Location = new System.Drawing.Point(995, 13);
+            this.AddRoom.Location = new System.Drawing.Point(995, 12);
             this.AddRoom.Name = "AddRoom";
             this.AddRoom.Size = new System.Drawing.Size(158, 45);
             this.AddRoom.TabIndex = 3;
@@ -257,25 +256,16 @@
             this.AddRoom.UseVisualStyleBackColor = true;
             this.AddRoom.Click += new System.EventHandler(this.AddRoom_Click);
             // 
-            // Save
-            // 
-            this.Save.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Save.Location = new System.Drawing.Point(182, 456);
-            this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(121, 41);
-            this.Save.TabIndex = 4;
-            this.Save.Text = "Save";
-            this.Save.UseVisualStyleBackColor = true;
-            // 
             // Settings
             // 
             this.Settings.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Settings.Location = new System.Drawing.Point(16, 456);
+            this.Settings.Location = new System.Drawing.Point(16, 459);
             this.Settings.Name = "Settings";
             this.Settings.Size = new System.Drawing.Size(121, 41);
             this.Settings.TabIndex = 5;
             this.Settings.Text = "Settings";
             this.Settings.UseVisualStyleBackColor = true;
+            this.Settings.Click += new System.EventHandler(this.Settings_Click);
             // 
             // HotelName
             // 
@@ -2600,6 +2590,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1200, 535);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.button4);
@@ -2610,13 +2601,13 @@
             this.Controls.Add(this.HotelNumber);
             this.Controls.Add(this.HotelName);
             this.Controls.Add(this.Settings);
-            this.Controls.Add(this.Save);
             this.Controls.Add(this.AddRoom);
             this.Controls.Add(this.Refresh);
             this.Controls.Add(this.BookRoom);
             this.Controls.Add(this.CoverPic);
             this.Name = "Form2";
             this.Text = "Home";
+            this.TransparencyKey = System.Drawing.Color.White;
             this.Load += new System.EventHandler(this.Form2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.CoverPic)).EndInit();
             this.Calendar.ResumeLayout(false);
@@ -2633,7 +2624,6 @@
         private System.Windows.Forms.Button BookRoom;
         private System.Windows.Forms.Button Refresh;
         private System.Windows.Forms.Button AddRoom;
-        private System.Windows.Forms.Button Save;
         private System.Windows.Forms.Button Settings;
         private System.Windows.Forms.Label HotelName;
         private System.Windows.Forms.Label HotelNumber;

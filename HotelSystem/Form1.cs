@@ -10,8 +10,10 @@ using System.Windows.Forms;
 
 namespace HotelSystem
 {
+    
     public partial class Form1 : Form
     {
+        public static int send = 0;
         public Form1()
         {
           
@@ -47,9 +49,10 @@ namespace HotelSystem
             }
             if (System.IO.File.Exists(SavePath + "\\config.txt"))
             {
-                HomeCall();
+                Form2 HomeScreen = Application.OpenForms["Form2"] as Form2;
+                try { HomeScreen.Show(); }
+                catch { }
             }
-            SavePathText.Text = (SavePath);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -57,17 +60,25 @@ namespace HotelSystem
             if (V(ContactNo.Text, HotelName.Text) == true)
             {
                 //Directory Creation
-                System.IO.Directory.CreateDirectory(SavePathText.Text);
+                System.IO.Directory.CreateDirectory("C:\\Program Files\\HotelSystem");
                 //
-                using (var writer=new System.IO.StreamWriter(SavePathText.Text + "\\config.txt")) {
+                using (var writer=new System.IO.StreamWriter("C:\\Program Files\\HotelSystem\\config.txt")) {
                     writer.WriteLine(HotelName.Text);
                     writer.WriteLine(ContactNo.Text);
                     writer.WriteLine(pictureBox1.ImageLocation);
+                    writer.WriteLine(SysColour.ToArgb().ToString());
                 }
-                HomeCall();
+                if (send == 1)
+                {
+                    MessageBox.Show("Application must restart to have effective changes.");
+                    Application.Exit();
+                }
+                else { HomeCall(); }
             }
 
+
         }
+        Color SysColour;
         private bool NumbVal (string St)
         {
             for (int i=0;i<St.Length;i++)
@@ -103,12 +114,11 @@ namespace HotelSystem
             }
             return val;
         }
-
         private void HomeCall()
         {
             this.Hide();
             Form2 HomeScreen = new Form2();
-            HomeScreen.ShowDialog();
+        HomeScreen.ShowDialog();
             this.Close();
         }
         private void SavePathDialog_HelpRequest(object sender, EventArgs e)
@@ -118,9 +128,39 @@ namespace HotelSystem
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (System.IO.File.Exists("C:\\Program Files\\HotelSystem\\config.txt"))
+            if(send == 1)
+            {
+                this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+                using (System.IO.StreamReader reader = new System.IO.StreamReader("C:\\Program Files\\HotelSystem\\config.txt"))
+                {
+                    reader.ReadLine();
+                    reader.ReadLine();
+                    reader.ReadLine();
+                    this.BackColor = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
+                }
+            }
+            if (System.IO.File.Exists("C:\\Program Files\\HotelSystem\\config.txt") && send == 0)
             {
                 HomeCall();
+            }
+            this.FormClosing += new FormClosingEventHandler(BookingForm_Closing);
+        }
+        private void BookingForm_Closing(object sender, FormClosingEventArgs e)
+        {
+            if (send == 1)
+            {
+                Form2 HomeScreen = Application.OpenForms["Form2"] as Form2;
+                try { HomeScreen.Show(); }
+                catch { }
+            }
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult result = colorDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                SysColour = colorDialog1.Color;
+                textBox1.BackColor = SysColour;
             }
         }
     }

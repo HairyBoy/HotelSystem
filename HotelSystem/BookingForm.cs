@@ -15,6 +15,7 @@ namespace HotelSystem
 
     public partial class BookingForm : Form
     {
+        public static int send=0;
         public List<TempRoom> SearchList = new List<TempRoom>();
         public BookingForm()
         {
@@ -23,6 +24,15 @@ namespace HotelSystem
 
         private void BookingForm_Load(object sender, EventArgs e)
         {
+
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            using (System.IO.StreamReader reader = new System.IO.StreamReader("C:\\Program Files\\HotelSystem\\config.txt"))
+            {
+                reader.ReadLine();
+                reader.ReadLine();
+                reader.ReadLine();
+                this.BackColor = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
+            }
             dateTimePicker1.Value = DateTime.Now.Date;
             dateTimePicker2.Value = DateTime.Now.Date;
             string[] combo = new string[] { "Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other" };
@@ -35,7 +45,7 @@ namespace HotelSystem
             HomeScreen.Show();
             
         }
-
+        
         private void button2_Click(object sender, EventArgs e)
         {
             if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text, SearchList[(checkcol() - 1)].Num))

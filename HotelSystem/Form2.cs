@@ -14,6 +14,7 @@ namespace HotelSystem
 {
     public partial class Form2 : Form
     {
+        
         public int iv;
         public DateTime[] Dates = new DateTime[7];
         public DateTime DAnchor = DateTime.Now.Date;
@@ -26,7 +27,9 @@ namespace HotelSystem
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            Form1.send = 1;
             BookingForm BookingForm = new BookingForm();
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             UIUpdate();
             CalUpdate();
         }
@@ -37,6 +40,7 @@ namespace HotelSystem
                 HotelName.Text = reader.ReadLine();
                 HotelNumber.Text = reader.ReadLine();
                 CoverPic.ImageLocation = reader.ReadLine();
+                this.BackColor = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
             }
         }
         private void richTextBox1_Click(object sender, System.EventArgs e)
@@ -403,6 +407,13 @@ namespace HotelSystem
                 }
             }
             return OutputList;
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Form1 Form1 = new Form1();
+            Form1.ShowDialog();
         }
     }
     public class Booking
