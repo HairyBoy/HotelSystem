@@ -23,6 +23,8 @@ namespace HotelSystem
 
         private void BookingForm_Load(object sender, EventArgs e)
         {
+            dateTimePicker1.Value = DateTime.Now.Date;
+            dateTimePicker2.Value = DateTime.Now.Date;
             string[] combo = new string[] { "Single", "Double", "Triple", "Quad", "Queen", "King", "Twin", "Double-double", "Studio", "Other" };
             comboBox1.Items.AddRange(combo);
             this.FormClosing += new FormClosingEventHandler(BookingForm_Closing);
@@ -36,7 +38,7 @@ namespace HotelSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
+            if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text, SearchList[(checkcol() - 1)].Num))
             {
                 DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
                 DBBookingAdd(SearchList[(checkcol()-1)]);
@@ -98,10 +100,12 @@ namespace HotelSystem
             string path = (AppDomain.CurrentDomain.BaseDirectory);
             return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
         }
-        private bool Validation(bool booking, string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo)
+        private bool Validation(bool booking, string FName, string SName, string Numb, string VEmail, string Notes, DateTime DateStart, DateTime DateEnd, string Combo,string RNum)
         {
+
             //FIRSTNAME START
             label35.Text = "";
+            List<Booking> BookList = ViewBooks();
             Regex AlphNum = new Regex("^[a-zA-Z0-9]*$");
             Regex Num = new Regex("^[0-9]*$");
             bool end = true;
@@ -186,15 +190,58 @@ namespace HotelSystem
             //CHECK START
             if(booking)
             {
-                if (checkcheck()!=1)
+                if (checkcheck() != 1)
                 {
                     end = false;
                     label35.Text += "\r\nOnly one textbox must be checked.";
                 }
+                else {
+                    for (int i = 0; i < BookList.Count; i++)
+                    {
+                        if (BookList[i].RoomNumber == RNum)
+                        {
+                            if (DateTime.Compare(DateStart.Date, BookList[i].VStart) <= 0 && DateTime.Compare(DateEnd.Date, BookList[i].VEnd) >= 0)
+                            {
+                                    label35.Text += "\r\nA Booking already exists there.";
+                                    end = false;
+                                    break;
+                            }
+                        }
+                    }
+                }
+
             }
             //CHECK END
-            return end;
 
+                return end;
+
+        }
+        private List<Booking> ViewBooks()
+        {
+            var OutputList = new List<Booking>();
+            using (SqlConnection DB = new SqlConnection(LinkString()))
+            using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
+                " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
+                " Rooms.RoomNumber, Visitors.FName, Visitors.SName,Visitors.ContactNo,Visitors.Email,Visitors.Notes,Bookings.Status FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
+            {
+                DB.Open();
+                using (SqlDataReader reader = Comm.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            OutputList.Add(new Booking
+                            {
+                                VStart = reader.GetDateTime(reader.GetOrdinal("VisitStart")).Date,
+                                VEnd = reader.GetDateTime(reader.GetOrdinal("VisitEnd")).Date,
+                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber"))
+                            });
+                        }
+                    }
+                }
+            }
+            return OutputList;
         }
         private int checkcheck()
         {
@@ -223,7 +270,7 @@ namespace HotelSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Validation(false,textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text))
+            if (Validation(false,textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text,"-1"))
             {
                 var OutputList = new List<TempRoom>();
                 string Link = LinkString();
@@ -257,15 +304,15 @@ namespace HotelSystem
                 TimeSpan diff = dateTimePicker2.Value - dateTimePicker1.Value;
                 for (int n = 1; n < 8; n++)
                 {
-                    tabnum = (Label)tableLayoutPanel1.GetControlFromPosition(0, y);
+                    tabnum = (Label)tableLayoutPanel1.GetControlFromPosition(0, n);
                     tabnum.Text = "";
-                    tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, y);
+                    tabnote = (Label)tableLayoutPanel1.GetControlFromPosition(1, n);
                     tabnote.Text = "";
-                    tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, y);
+                    tabprice = (Label)tableLayoutPanel1.GetControlFromPosition(2, n);
                     tabprice.Text = "";
-                    y++;
+                   
                 }
-                y = 1;
+                
                 for (int i = 0; i < OutputList.Count; i++)
                 {
                     if (RoomSearch(OutputList[i]))
@@ -280,7 +327,7 @@ namespace HotelSystem
                         SearchList.Add(OutputList[i]);
                     }
 
-                    if (y == 7)
+                    if (y == 8)
                     {
                         break;
                     }

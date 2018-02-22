@@ -17,7 +17,7 @@ namespace HotelSystem
         public int iv;
         public DateTime[] Dates = new DateTime[7];
         public DateTime DAnchor = DateTime.Now.Date;
-
+        List<Booking> MiniListG = new List<Booking>();
         public Form2()
         {
             InitializeComponent();
@@ -82,7 +82,7 @@ namespace HotelSystem
             using (SqlConnection DB = new SqlConnection(LinkString()))
             using (SqlCommand Comm = new SqlCommand("SELECT BookingID AS ID, Bookings.VisitStart, Bookings.VisitEnd," +
                 " Bookings.Price, Bookings.RoomID, Bookings.VisitorID," +
-                " Rooms.RoomNumber, Visitors.FName, Visitors.SName,Visitors.ContactNo,Visitors.Email FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
+                " Rooms.RoomNumber, Visitors.FName, Visitors.SName,Visitors.ContactNo,Visitors.Email,Visitors.Notes,Bookings.Status FROM Bookings INNER JOIN Rooms on Rooms.RoomID = Bookings.RoomID INNER JOIN Visitors on Visitors.VisitorID = Bookings.VisitorID", DB))
             {
                 DB.Open();
                 using (SqlDataReader reader = Comm.ExecuteReader())
@@ -103,7 +103,9 @@ namespace HotelSystem
                                 FName = reader.GetString(reader.GetOrdinal("FName")),
                                 SName = reader.GetString(reader.GetOrdinal("SName")),
                                 ContactNo = reader.GetString(reader.GetOrdinal("ContactNo")),
-                                Email = reader.GetString(reader.GetOrdinal("Email"))
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                Notes = reader.GetString(reader.GetOrdinal("Notes")),
+                                Status = reader.GetString(reader.GetOrdinal("Status"))
                             });
                         }
                     }
@@ -111,9 +113,86 @@ namespace HotelSystem
             }
             return OutputList;
         }
+        public int val;
+        private void Checkbox_Click(object sender, EventArgs e)
+        {
+            List<Booking> BookList = ViewBooks();
+            for(int i = 1; i < 8; i++)
+            {
+                if(((CheckBox)tableLayoutPanel1.GetControlFromPosition(4, i)).Checked == true)
+                {
+                    val = i-1;
+                    break;
+                }
+            }
+            if (((RichTextBox)tableLayoutPanel1.GetControlFromPosition(1, val+1)).Text == "In")
+            {
+
+                using (SqlConnection DB = new SqlConnection(LinkString()))
+                using (SqlCommand Comm = new SqlCommand("UPDATE Bookings SET Status = 'A' WHERE BookingID="+MiniListG[val].ID, DB))
+                {
+                    DB.Open();
+                    Comm.ExecuteNonQuery();
+                    DB.Close();
+                }
+            }
+            else if (((RichTextBox)tableLayoutPanel1.GetControlFromPosition(1, val + 1)).Text == "Out")
+            {
+                using (SqlConnection DB = new SqlConnection(LinkString()))
+                using (SqlCommand Comm = new SqlCommand("UPDATE Bookings SET Status = 'R' WHERE BookingID = "+MiniListG[val].ID, DB))
+                {
+                    DB.Open();
+                    Comm.ExecuteNonQuery();
+                    DB.Close();
+                }
+            }
+            CalUpdate();
+        }
+
+        private void MiniUpdate()
+        {
+            for(int x = 0; x < 4; x++)
+            {
+                for(int y = 1; y < 8; y++)
+                {
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(x, y)).Text = "";
+                    ((CheckBox)tableLayoutPanel1.GetControlFromPosition(4, y)).Visible = false;
+                    ((CheckBox)tableLayoutPanel1.GetControlFromPosition(4, y)).Checked = false;
+                }
+            }
+            List<Booking> BookList = ViewBooks();
+            List<Booking> MiniListP = new List<Booking>();
+            int c=1;
+            for (int i =0; i < BookList.Count&&i<7; i++)
+            {
+                if(BookList[i].VStart == DateTime.Now.Date && BookList[i].Status!="A")
+                {
+                    MiniListP.Add(BookList[i]);
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(0, c)).Text = BookList[i].FName +" "+ BookList[i].SName;
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(1, c)).Text = "In";
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(2, c)).Text = "£"+BookList[i].Price;
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(3, c)).Text = BookList[i].Notes;
+                    ((CheckBox)tableLayoutPanel1.GetControlFromPosition(4, c)).Visible = true;
+                    c = c + 1;
+                }
+                else if(BookList[i].VEnd == DateTime.Now.Date && BookList[i].Status != "R")
+                {
+                    MiniListP.Add(BookList[i]);
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(0, c)).Text = BookList[i].FName + " " + BookList[i].SName;
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(1, c)).Text = "Out";
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(2, c)).Text = "£" + BookList[i].Price;
+                    ((RichTextBox)tableLayoutPanel1.GetControlFromPosition(3, c)).Text = BookList[i].Notes;
+                    ((CheckBox)tableLayoutPanel1.GetControlFromPosition(4, c)).Visible = true;
+                    c = c + 1;
+                }
+                
+            }
+            MiniListG = MiniListP;
+        }
         private void CalUpdate()
         {
             ClearTable();
+            MiniUpdate();
             //Dates refresh
                 for (int i = 1; i < 8; i++)
                 {
@@ -168,7 +247,10 @@ namespace HotelSystem
                                     Rich.Text = OutputList[m].FName;
                                     check = false;
                                 }
-                             Rich.BackColor = Color.Green;
+                                if(OutputList[m].Status == "R") { Rich.BackColor = Color.Red; }
+                            else if (OutputList[m].Status == "G") { Rich.BackColor = Color.Green; }
+                            else if (OutputList[m].Status == "A") { Rich.BackColor = Color.Orange; }
+                  
                         }
                     }
                 }
@@ -232,7 +314,7 @@ namespace HotelSystem
                         break;
                 }
             }
-           else if (Calendar.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor == Color.Green)
+           else if (Calendar.GetControlFromPosition(cellPos.X, cellPos.Y).BackColor != SystemColors.Control)
             {
                 Booking Book=BookList[0];
                 for (int i = 0; i < BookList.Count; i++)
@@ -336,6 +418,8 @@ namespace HotelSystem
         private string _SName;
         private string _Email;
         private string _ContactNo;
+        private string _Notes;
+        private string _Status;
 
         public int ID { get => _ID; set => _ID = value; }
         public DateTime VStart { get => _VStart; set => _VStart = value; }
@@ -348,15 +432,14 @@ namespace HotelSystem
         public string SName { get => _SName; set => _SName = value; }
         public string Email { get => _Email; set => _Email = value; }
         public string ContactNo { get => _ContactNo; set => _ContactNo = value; }
+        public string Notes { get => _Notes; set => _Notes = value; }
+        public string Status { get => _Status; set => _Status = value; }
     }
     public class Room:Booking
     {
         private string _RoomSize;
         private string _KeyCard;
-        private string _Notes;
 
-
-        public string Notes { get => _Notes; set => _Notes = value; }
         public string KeyCard { get => _KeyCard; set => _KeyCard = value; }
         public string RoomSize { get => _RoomSize; set => _RoomSize = value; }
     }

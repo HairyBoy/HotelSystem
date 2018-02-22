@@ -45,6 +45,34 @@ namespace HotelSystem
             string path = (AppDomain.CurrentDomain.BaseDirectory);
             return ("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + path + "Database1.mdf;Integrated Security=True");
         }
+        private List<Room> RoomGrab()
+        {
+            var OutputList = new List<Room>();
+            using (SqlConnection DB = new SqlConnection(LinkString()))
+            using (SqlCommand Comm = new SqlCommand("SELECT RoomID AS ID, RoomNumber, RoomSize, Price, Notes, KeycardNo FROM Rooms", DB))
+            {
+                DB.Open();
+                using (SqlDataReader reader = Comm.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            OutputList.Add(new Room
+                            {
+                                ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                                RoomNumber = reader.GetString(reader.GetOrdinal("RoomNumber")),
+                                RoomSize = reader.GetString(reader.GetOrdinal("RoomSize")),
+                                Notes = reader.GetString(reader.GetOrdinal("Notes")),
+                                KeyCard = reader.GetString(reader.GetOrdinal("KeycardNo")),
+                                Price = reader.GetDouble(reader.GetOrdinal("Price")),
+                            });
+                        }
+                    }
+                }
+            }
+            return OutputList;
+        }
         private void DBRoomAdd(string RNumb, string RSize, bool DAccess, string RPrice, string KeyNumb, string RNotes)
         {
 
@@ -67,6 +95,7 @@ namespace HotelSystem
         }
         private bool Val(string RNumb, string RSize, bool DAccess, string RPrice, string KeyNumb, string RNotes)
         {
+            List<Room> RoomList = RoomGrab();
             bool temp = true;
             label8.Text = "";
             Regex Num = new Regex("^[0-9]*$");
@@ -93,8 +122,17 @@ namespace HotelSystem
                 temp = false;
                 label8.Text += "\r\nNotes must contain 50 or less characters.";
             }
-
+            for (int i = 0; i < RoomList.Count; i++)
+            {
+                if (RNumb == RoomList[i].RoomNumber)
+                {
+                    temp = false;
+                    label8.Text += "\r\nRoom Number must be unique";
+                    break;
+                }
+            }
             return temp;
         }
     }
+
 }
