@@ -48,10 +48,13 @@ namespace HotelSystem
         
         private void button2_Click(object sender, EventArgs e)
         {
-            if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text, SearchList[(checkcol() - 1)].Num))
+            if (checkcol() > 0)
             {
-                DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
-                DBBookingAdd(SearchList[(checkcol()-1)]);
+                if (Validation(true, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value, comboBox1.Text, SearchList[(checkcol() - 1)].Num))
+                {
+                    DBVisitorAdd(textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, textBox5.Text);
+                    DBBookingAdd(SearchList[(checkcol() - 1)]);
+                }
             }
         }
         private void DBBookingAdd(TempRoom choiceroom)
